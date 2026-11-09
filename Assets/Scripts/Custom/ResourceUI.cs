@@ -10,8 +10,8 @@ public class ResourceUI : MonoBehaviour
     public GameObject woodParticlePrefab; // Particle effect prefab for wood collection
     public GameObject stoneParticlePrefab; // Particle effect prefab for stone collection
 
-    public int woodCount = 0;
-    public int stoneCount = 0;
+    public int woodCount = 1000000000;
+    public int stoneCount = 1000000000;
 
     private void Awake()
     {
