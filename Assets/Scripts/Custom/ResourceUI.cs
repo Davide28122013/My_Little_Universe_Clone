@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class ResourceUI : MonoBehaviour
 {
+    public const int UnlimitedResourceAmount = int.MaxValue;
+
     public static ResourceUI Instance;
 
     public TMPro.TMP_Text woodText;
@@ -10,8 +12,11 @@ public class ResourceUI : MonoBehaviour
     public GameObject woodParticlePrefab; // Particle effect prefab for wood collection
     public GameObject stoneParticlePrefab; // Particle effect prefab for stone collection
 
-    public int woodCount = 1000000000;
-    public int stoneCount = 1000000000;
+    [Tooltip("Keeps the two resources at the maximum supported value and prevents spending.")]
+    public bool unlimitedResources = true;
+
+    public int woodCount = UnlimitedResourceAmount;
+    public int stoneCount = UnlimitedResourceAmount;
 
     private void Awake()
     {
@@ -22,7 +27,11 @@ public class ResourceUI : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            return;
         }
+
+        ApplyUnlimitedResources();
+        RefreshResourceText();
     }
 
     // Update the resource count and trigger particle effects
@@ -30,13 +39,17 @@ public class ResourceUI : MonoBehaviour
     {
         if (resourceType == "Wood")
         {
-            woodCount += amount;
-            woodText.text = "Wood: " + woodCount.ToString();
+            woodCount = unlimitedResources
+                ? UnlimitedResourceAmount
+                : ClampResourceChange(woodCount, amount);
+            RefreshWoodText();
         }
         else if (resourceType == "Stone")
         {
-            stoneCount += amount;
-            stoneText.text = "Stone: " + stoneCount.ToString();
+            stoneCount = unlimitedResources
+                ? UnlimitedResourceAmount
+                : ClampResourceChange(stoneCount, amount);
+            RefreshStoneText();
         }
     }
 
@@ -51,13 +64,13 @@ public class ResourceUI : MonoBehaviour
 
         if (resourceType == "Wood")
         {
-            woodCount = count; // Assign the loaded count directly
-            woodText.text = "Wood: " + woodCount.ToString();
+            woodCount = unlimitedResources ? UnlimitedResourceAmount : count;
+            RefreshWoodText();
         }
         else if (resourceType == "Stone")
         {
-            stoneCount = count; // Assign the loaded count directly
-            stoneText.text = "Stone: " + stoneCount.ToString();
+            stoneCount = unlimitedResources ? UnlimitedResourceAmount : count;
+            RefreshStoneText();
         }
     }
 
@@ -69,5 +82,49 @@ public class ResourceUI : MonoBehaviour
     public int GetStoneCount()
     {
         return stoneCount;
+    }
+
+    public void ApplyUnlimitedResources()
+    {
+        if (!unlimitedResources)
+        {
+            return;
+        }
+
+        woodCount = UnlimitedResourceAmount;
+        stoneCount = UnlimitedResourceAmount;
+    }
+
+    private static int ClampResourceChange(int currentValue, int change)
+    {
+        long result = (long)currentValue + change;
+        if (result < 0)
+        {
+            return 0;
+        }
+
+        return result > int.MaxValue ? int.MaxValue : (int)result;
+    }
+
+    private void RefreshResourceText()
+    {
+        RefreshWoodText();
+        RefreshStoneText();
+    }
+
+    private void RefreshWoodText()
+    {
+        if (woodText != null)
+        {
+            woodText.text = unlimitedResources ? "Wood: ∞" : "Wood: " + woodCount;
+        }
+    }
+
+    private void RefreshStoneText()
+    {
+        if (stoneText != null)
+        {
+            stoneText.text = unlimitedResources ? "Stone: ∞" : "Stone: " + stoneCount;
+        }
     }
 }

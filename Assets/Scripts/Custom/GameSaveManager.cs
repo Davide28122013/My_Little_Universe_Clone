@@ -55,6 +55,20 @@ public class GameSaveManager : MonoBehaviour
         {
             Debug.LogWarning("Save file not found!");
         }
+
+        // Saved progress must not disable the clone's unlimited-resources mode.
+        if (ResourceUI.Instance != null)
+        {
+            ResourceUI.Instance.ApplyUnlimitedResources();
+            ResourceUI.Instance.SetResourceCount("Wood", ResourceUI.UnlimitedResourceAmount);
+            ResourceUI.Instance.SetResourceCount("Stone", ResourceUI.UnlimitedResourceAmount);
+        }
+
+        if (playerInventory != null && ResourceUI.Instance != null && ResourceUI.Instance.unlimitedResources)
+        {
+            playerInventory.woodCount = ResourceUI.UnlimitedResourceAmount;
+            playerInventory.stoneCount = ResourceUI.UnlimitedResourceAmount;
+        }
     }
 }
 

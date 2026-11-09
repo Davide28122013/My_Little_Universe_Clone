@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 public class AreaUnlocker : MonoBehaviour
 {
+    [Tooltip("Unlocks this area immediately when the game starts.")]
+    public bool unlockAtStart = true;
     public string areaName;
     public int woodRequired;
     public int stoneRequired;
@@ -26,6 +28,14 @@ public class AreaUnlocker : MonoBehaviour
     private void Start()
     {
         resourceUI = ResourceUI.Instance; // Access the ResourceUI singleton
+
+        if (unlockAtStart)
+        {
+            isUnlocked = true;
+            woodProvided = woodRequired;
+            stoneProvided = stoneRequired;
+        }
+
         UpdateAreaState(); // Ensure the area reflects the correct state (locked/unlocked) on start
 
         // Initialize the progress bar and text
@@ -56,9 +66,12 @@ public class AreaUnlocker : MonoBehaviour
         woodProvided += woodToSubmit;
         stoneProvided += stoneToSubmit;
 
-        // Deduct the resources from the player's inventory
-        resourceUI.UpdateResourceCount("Wood", -woodToSubmit);
-        resourceUI.UpdateResourceCount("Stone", -stoneToSubmit);
+        // Unlimited mode deliberately leaves the displayed resource amount unchanged.
+        if (resourceUI != null)
+        {
+            resourceUI.UpdateResourceCount("Wood", -woodToSubmit);
+            resourceUI.UpdateResourceCount("Stone", -stoneToSubmit);
+        }
 
         Debug.Log($"Submitted {woodToSubmit} wood and {stoneToSubmit} stone to {areaName}");
 
@@ -82,8 +95,13 @@ public class AreaUnlocker : MonoBehaviour
 
         if (lockedVisual != null)
         {
-            lockedVisual.SetActive(true);  // Remove the locked visual (fence, door, etc.)
-            gameObject.GetComponent<Collider>().enabled = false;
+            lockedVisual.SetActive(false);
+        }
+
+        Collider areaCollider = GetComponent<Collider>();
+        if (areaCollider != null)
+        {
+            areaCollider.enabled = false;
         }
 
         // Disable the world canvas since the area is unlocked
@@ -101,7 +119,13 @@ public class AreaUnlocker : MonoBehaviour
         {
             if (lockedVisual != null)
             {
-                lockedVisual.SetActive(true);  // Unlock the area visually if it's already unlocked
+                lockedVisual.SetActive(false);
+            }
+
+            Collider areaCollider = GetComponent<Collider>();
+            if (areaCollider != null)
+            {
+                areaCollider.enabled = false;
             }
 
             if (worldCanvas != null)
@@ -113,7 +137,7 @@ public class AreaUnlocker : MonoBehaviour
         {
             if (lockedVisual != null)
             {
-                lockedVisual.SetActive(false);  // Keep the area locked if not yet unlocked
+                lockedVisual.SetActive(true);
             }
 
             if (worldCanvas != null)
@@ -161,6 +185,15 @@ public class AreaUnlocker : MonoBehaviour
 
     public void LoadData(AreaUnlockData data)
     {
+        if (unlockAtStart)
+        {
+            woodProvided = woodRequired;
+            stoneProvided = stoneRequired;
+            isUnlocked = true;
+            UpdateAreaState();
+            return;
+        }
+
         woodProvided = data.woodProvided;
         stoneProvided = data.stoneProvided;
         isUnlocked = data.isUnlocked;
