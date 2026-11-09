@@ -20,6 +20,8 @@ public class GameSaveManager : MonoBehaviour
         {
             woodCount = playerInventory.woodCount,
             stoneCount = playerInventory.stoneCount,
+            gemsCount = ResourceUI.Instance != null ? ResourceUI.Instance.GetGemsCount() : playerInventory.gemsCount,
+            banknotesCount = ResourceUI.Instance != null ? ResourceUI.Instance.GetBanknotesCount() : playerInventory.banknotesCount,
             areaUnlockers = new AreaUnlockData[areaUnlockers.Length]
         };
 
@@ -43,6 +45,8 @@ public class GameSaveManager : MonoBehaviour
 
             playerInventory.woodCount = saveData.woodCount;
             playerInventory.stoneCount = saveData.stoneCount;
+            playerInventory.gemsCount = saveData.gemsCount;
+            playerInventory.banknotesCount = saveData.banknotesCount;
 
             for (int i = 0; i < areaUnlockers.Length; i++)
             {
@@ -62,12 +66,16 @@ public class GameSaveManager : MonoBehaviour
             ResourceUI.Instance.ApplyUnlimitedResources();
             ResourceUI.Instance.SetResourceCount("Wood", ResourceUI.UnlimitedResourceAmount);
             ResourceUI.Instance.SetResourceCount("Stone", ResourceUI.UnlimitedResourceAmount);
+            ResourceUI.Instance.SetResourceCount("Gems", ResourceUI.UnlimitedResourceAmount);
+            ResourceUI.Instance.SetResourceCount("Banknotes", ResourceUI.UnlimitedResourceAmount);
         }
 
         if (playerInventory != null && ResourceUI.Instance != null && ResourceUI.Instance.unlimitedResources)
         {
             playerInventory.woodCount = ResourceUI.UnlimitedResourceAmount;
             playerInventory.stoneCount = ResourceUI.UnlimitedResourceAmount;
+            playerInventory.gemsCount = ResourceUI.UnlimitedResourceAmount;
+            playerInventory.banknotesCount = ResourceUI.UnlimitedResourceAmount;
         }
     }
 }
@@ -77,6 +85,8 @@ public class GameSaveData
 {
     public int woodCount;
     public int stoneCount;
+    public int gemsCount;
+    public int banknotesCount;
     public AreaUnlockData[] areaUnlockers;
 }
 [System.Serializable]

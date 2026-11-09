@@ -8,6 +8,8 @@ public class ResourceUI : MonoBehaviour
 
     public TMPro.TMP_Text woodText;
     public TMPro.TMP_Text stoneText;
+    public TMPro.TMP_Text gemsText;
+    public TMPro.TMP_Text banknotesText;
 
     public GameObject woodParticlePrefab; // Particle effect prefab for wood collection
     public GameObject stoneParticlePrefab; // Particle effect prefab for stone collection
@@ -17,6 +19,8 @@ public class ResourceUI : MonoBehaviour
 
     public int woodCount = UnlimitedResourceAmount;
     public int stoneCount = UnlimitedResourceAmount;
+    public int gemsCount = UnlimitedResourceAmount;
+    public int banknotesCount = UnlimitedResourceAmount;
 
     private void Awake()
     {
@@ -31,6 +35,7 @@ public class ResourceUI : MonoBehaviour
         }
 
         ApplyUnlimitedResources();
+        CreateCurrencyLabels();
         RefreshResourceText();
     }
 
@@ -50,6 +55,20 @@ public class ResourceUI : MonoBehaviour
                 ? UnlimitedResourceAmount
                 : ClampResourceChange(stoneCount, amount);
             RefreshStoneText();
+        }
+        else if (resourceType == "Gems")
+        {
+            gemsCount = unlimitedResources
+                ? UnlimitedResourceAmount
+                : ClampResourceChange(gemsCount, amount);
+            RefreshGemsText();
+        }
+        else if (resourceType == "Banknotes")
+        {
+            banknotesCount = unlimitedResources
+                ? UnlimitedResourceAmount
+                : ClampResourceChange(banknotesCount, amount);
+            RefreshBanknotesText();
         }
     }
 
@@ -72,6 +91,16 @@ public class ResourceUI : MonoBehaviour
             stoneCount = unlimitedResources ? UnlimitedResourceAmount : count;
             RefreshStoneText();
         }
+        else if (resourceType == "Gems")
+        {
+            gemsCount = unlimitedResources ? UnlimitedResourceAmount : count;
+            RefreshGemsText();
+        }
+        else if (resourceType == "Banknotes")
+        {
+            banknotesCount = unlimitedResources ? UnlimitedResourceAmount : count;
+            RefreshBanknotesText();
+        }
     }
 
     public int GetWoodCount()
@@ -84,6 +113,16 @@ public class ResourceUI : MonoBehaviour
         return stoneCount;
     }
 
+    public int GetGemsCount()
+    {
+        return gemsCount;
+    }
+
+    public int GetBanknotesCount()
+    {
+        return banknotesCount;
+    }
+
     public void ApplyUnlimitedResources()
     {
         if (!unlimitedResources)
@@ -93,6 +132,8 @@ public class ResourceUI : MonoBehaviour
 
         woodCount = UnlimitedResourceAmount;
         stoneCount = UnlimitedResourceAmount;
+        gemsCount = UnlimitedResourceAmount;
+        banknotesCount = UnlimitedResourceAmount;
     }
 
     private static int ClampResourceChange(int currentValue, int change)
@@ -110,6 +151,8 @@ public class ResourceUI : MonoBehaviour
     {
         RefreshWoodText();
         RefreshStoneText();
+        RefreshGemsText();
+        RefreshBanknotesText();
     }
 
     private void RefreshWoodText()
@@ -126,5 +169,50 @@ public class ResourceUI : MonoBehaviour
         {
             stoneText.text = unlimitedResources ? "Stone: ∞" : "Stone: " + stoneCount;
         }
+    }
+
+    private void RefreshGemsText()
+    {
+        if (gemsText != null)
+        {
+            gemsText.text = unlimitedResources ? "Gems: ∞" : "Gems: " + gemsCount;
+        }
+    }
+
+    private void RefreshBanknotesText()
+    {
+        if (banknotesText != null)
+        {
+            banknotesText.text = unlimitedResources ? "Banknotes: ∞" : "Banknotes: " + banknotesCount;
+        }
+    }
+
+    private void CreateCurrencyLabels()
+    {
+        if (woodText == null)
+        {
+            return;
+        }
+
+        if (gemsText == null)
+        {
+            gemsText = CreateCurrencyLabel("GemsText", -70f, new Color(0.2f, 0.9f, 1f));
+        }
+
+        if (banknotesText == null)
+        {
+            banknotesText = CreateCurrencyLabel("BanknotesText", -140f, new Color(0.4f, 1f, 0.45f));
+        }
+    }
+
+    private TMPro.TMP_Text CreateCurrencyLabel(string labelName, float verticalOffset, Color color)
+    {
+        TMPro.TMP_Text label = Instantiate(woodText, woodText.transform.parent);
+        label.name = labelName;
+        label.color = color;
+
+        RectTransform labelTransform = label.rectTransform;
+        labelTransform.anchoredPosition += new Vector2(0f, verticalOffset);
+        return label;
     }
 }
