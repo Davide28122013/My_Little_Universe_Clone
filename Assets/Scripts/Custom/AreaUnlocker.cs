@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class AreaUnlocker : MonoBehaviour
 {
     [Tooltip("Unlocks this area immediately when the game starts.")]
-    public bool unlockAtStart = true;
+    public bool unlockAtStart = false;
     public string areaName;
     public int woodRequired;
     public int stoneRequired;

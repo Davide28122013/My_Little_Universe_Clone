@@ -10,6 +10,11 @@ public class ResourceUI : MonoBehaviour
     public TMPro.TMP_Text stoneText;
     public TMPro.TMP_Text gemsText;
     public TMPro.TMP_Text banknotesText;
+    public TMPro.TMP_Text ironText;
+    public TMPro.TMP_Text goldText;
+    public TMPro.TMP_Text coalText;
+    public TMPro.TMP_Text crystalsText;
+    public TMPro.TMP_Text swordFragmentsText;
 
     public GameObject woodParticlePrefab; // Particle effect prefab for wood collection
     public GameObject stoneParticlePrefab; // Particle effect prefab for stone collection
@@ -21,6 +26,11 @@ public class ResourceUI : MonoBehaviour
     public int stoneCount = UnlimitedResourceAmount;
     public int gemsCount = UnlimitedResourceAmount;
     public int banknotesCount = UnlimitedResourceAmount;
+    public int ironCount = UnlimitedResourceAmount;
+    public int goldCount = UnlimitedResourceAmount;
+    public int coalCount = UnlimitedResourceAmount;
+    public int crystalsCount = UnlimitedResourceAmount;
+    public int swordFragmentsCount = UnlimitedResourceAmount;
 
     private void Awake()
     {
@@ -70,6 +80,31 @@ public class ResourceUI : MonoBehaviour
                 : ClampResourceChange(banknotesCount, amount);
             RefreshBanknotesText();
         }
+        else if (resourceType == "Iron")
+        {
+            ironCount = unlimitedResources ? UnlimitedResourceAmount : ClampResourceChange(ironCount, amount);
+            RefreshIronText();
+        }
+        else if (resourceType == "Gold")
+        {
+            goldCount = unlimitedResources ? UnlimitedResourceAmount : ClampResourceChange(goldCount, amount);
+            RefreshGoldText();
+        }
+        else if (resourceType == "Coal")
+        {
+            coalCount = unlimitedResources ? UnlimitedResourceAmount : ClampResourceChange(coalCount, amount);
+            RefreshCoalText();
+        }
+        else if (resourceType == "Crystals")
+        {
+            crystalsCount = unlimitedResources ? UnlimitedResourceAmount : ClampResourceChange(crystalsCount, amount);
+            RefreshCrystalsText();
+        }
+        else if (resourceType == "SwordFragments")
+        {
+            swordFragmentsCount = unlimitedResources ? UnlimitedResourceAmount : ClampResourceChange(swordFragmentsCount, amount);
+            RefreshSwordFragmentsText();
+        }
     }
 
     // Set the resource count directly
@@ -100,6 +135,31 @@ public class ResourceUI : MonoBehaviour
         {
             banknotesCount = unlimitedResources ? UnlimitedResourceAmount : count;
             RefreshBanknotesText();
+        }
+        else if (resourceType == "Iron")
+        {
+            ironCount = unlimitedResources ? UnlimitedResourceAmount : count;
+            RefreshIronText();
+        }
+        else if (resourceType == "Gold")
+        {
+            goldCount = unlimitedResources ? UnlimitedResourceAmount : count;
+            RefreshGoldText();
+        }
+        else if (resourceType == "Coal")
+        {
+            coalCount = unlimitedResources ? UnlimitedResourceAmount : count;
+            RefreshCoalText();
+        }
+        else if (resourceType == "Crystals")
+        {
+            crystalsCount = unlimitedResources ? UnlimitedResourceAmount : count;
+            RefreshCrystalsText();
+        }
+        else if (resourceType == "SwordFragments")
+        {
+            swordFragmentsCount = unlimitedResources ? UnlimitedResourceAmount : count;
+            RefreshSwordFragmentsText();
         }
     }
 
@@ -134,6 +194,11 @@ public class ResourceUI : MonoBehaviour
         stoneCount = UnlimitedResourceAmount;
         gemsCount = UnlimitedResourceAmount;
         banknotesCount = UnlimitedResourceAmount;
+        ironCount = UnlimitedResourceAmount;
+        goldCount = UnlimitedResourceAmount;
+        coalCount = UnlimitedResourceAmount;
+        crystalsCount = UnlimitedResourceAmount;
+        swordFragmentsCount = UnlimitedResourceAmount;
     }
 
     private static int ClampResourceChange(int currentValue, int change)
@@ -153,6 +218,11 @@ public class ResourceUI : MonoBehaviour
         RefreshStoneText();
         RefreshGemsText();
         RefreshBanknotesText();
+        RefreshIronText();
+        RefreshGoldText();
+        RefreshCoalText();
+        RefreshCrystalsText();
+        RefreshSwordFragmentsText();
     }
 
     private void RefreshWoodText()
@@ -187,6 +257,20 @@ public class ResourceUI : MonoBehaviour
         }
     }
 
+    private void RefreshIronText() => SetText(ironText, "Iron", ironCount);
+    private void RefreshGoldText() => SetText(goldText, "Gold", goldCount);
+    private void RefreshCoalText() => SetText(coalText, "Coal", coalCount);
+    private void RefreshCrystalsText() => SetText(crystalsText, "Crystals", crystalsCount);
+    private void RefreshSwordFragmentsText() => SetText(swordFragmentsText, "Sword Fragments", swordFragmentsCount);
+
+    private void SetText(TMPro.TMP_Text label, string labelName, int count)
+    {
+        if (label != null)
+        {
+            label.text = unlimitedResources ? labelName + ": ∞" : labelName + ": " + count;
+        }
+    }
+
     private void CreateCurrencyLabels()
     {
         if (woodText == null)
@@ -203,6 +287,12 @@ public class ResourceUI : MonoBehaviour
         {
             banknotesText = CreateCurrencyLabel("BanknotesText", -140f, new Color(0.4f, 1f, 0.45f));
         }
+
+        if (ironText == null) ironText = CreateCurrencyLabel("IronText", -210f, new Color(0.7f, 0.7f, 0.75f));
+        if (goldText == null) goldText = CreateCurrencyLabel("GoldText", -280f, new Color(1f, 0.8f, 0.1f));
+        if (coalText == null) coalText = CreateCurrencyLabel("CoalText", -350f, new Color(0.45f, 0.45f, 0.45f));
+        if (crystalsText == null) crystalsText = CreateCurrencyLabel("CrystalsText", -420f, new Color(0.75f, 0.35f, 1f));
+        if (swordFragmentsText == null) swordFragmentsText = CreateCurrencyLabel("SwordFragmentsText", -490f, new Color(1f, 0.55f, 0.2f));
     }
 
     private TMPro.TMP_Text CreateCurrencyLabel(string labelName, float verticalOffset, Color color)
